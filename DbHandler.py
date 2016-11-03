@@ -24,27 +24,31 @@ def get_states():
         endtime=arrow.get(j[1]).to("US/Eastern")
         if i[0]!=j[0]:
             yield {"content":i[0],"start":int(starttime.timestamp)*1000,"end":int(endtime.timestamp)*1000}
+        last=j
+    starttime=arrow.get(last[1]).to("US/Eastern")
+    endtime=arrow.now().to("US/Eastern")
+    yield {"content":last[0],"start":int(starttime.timestamp)*1000,"end":int(endtime.timestamp)*1000}
 
-
-
-def get_Data():
-  with db_cursor() as c:
-        c.execute("select state,last_changed from states where entity_id='sensor.location' and state!='unknown';")
-        l=c.fetchall()
-  	for i in l:
-		starttime=arrow.get(i[1]).to("US/Eastern")
-		yield {"user":"sriram","state":i[0],"time":starttime.timestamp}
-		
-
-def push_mongo():
-    db=get_db()
-    c=list(get_Data())
-    db.location.insert(c)
 
 def get_timestamps(i):
     if int(arrow.get(i[0]).timestamp)> 0:
         return arrow.get(i[0]).timestamp 
-#
+
+
+
+def write_Loc_from_HA():
+    with db_cursor() as c:
+        c.execute("select state,last_changed from states where entity_id='sensor.location' and state!='unknown';")
+        l=c.fetchall()
+    for i,j in zip(l,l[1:]):
+        starttime=arrow.get(i[1])
+        endtime=arrow.get(j[1])
+        if i[0]!=j[0]:
+            yield {"User":"Sriram","State":i[0],"Start":int(starttime.timestamp),"End":int(endtime.timestamp)}
+
+# for i in write_Loc_from_HA():
+#     print i
+#     dbtest.write_loc(i)
 # def get_sleep():
 #     with db_cursor() as c:
 #         c.execute("select state from states where entity_id='sensor.slept' and state!='unknown';")

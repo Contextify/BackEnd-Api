@@ -15,7 +15,7 @@
         console.log( "document loaded" );
 
         $.ajax({
-        	  url: 'http://home.sriramsv.com:5000/',
+        	  url: 'http://home.sriramsv.com:5000',
         	  //data: data,
         	  success: function(data) {
                  console.log("********************");
@@ -30,7 +30,7 @@
         var timeline = new links.Timeline(document.getElementById('mytimeline'));
         timeline.setOptions(options)
         // Draw our timeline with the created data and options
-        timeline.draw(JSON.parse(data));
+        timeline.draw(data);
 
               },
               contentType : 'application/json'   

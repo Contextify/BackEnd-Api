@@ -1,11 +1,11 @@
-from flask import Flask,render_template,make_response
+from flask import Flask,render_template,jsonify,Request,Response
 app = Flask(__name__)
 import json
 from DbHandler import get_states
 @app.route("/")
 def index():
     res=list(get_states())
-    return json.dumps(res,indent=4,sort_keys=True)
+    return jsonify(res)
     
 @app.route("/timeline")
 def tm():

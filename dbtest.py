@@ -12,7 +12,12 @@ def get_db():
 
 def write_loc(data):
 	db=get_db()
-	print data
-	res=db.location.find({"user":data['User'],"time":data['Timestamp']})
-	if len(list(res)):
-		print True
+	res=db.location.find(data)
+	if list(res):
+		return -1
+	db.location.insert(data)
+	return 0
+
+
+
+
