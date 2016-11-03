@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedule</title>
+</head>
+
+<body>
+<table border="1">
+    <TR>
+        <TH>State</TH>
+        <TH>From</TH>
+        <TH>To</TH>
+        <TH>Day</TH>
+        <TH>Duration</TH>
+    </TR>
+{% for item in items %}
+<TR>
+   <TD>{{item.state}}</TD>
+   <TD>{{item.from}}</TD>
+    <TD>{{item.to}}</TD>
+    <TD>{{item.day}}</TD>
+    <TD>{{item.duration}}</TD>
+</TR>
+{% endfor %}
+</table>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UserState</title>
+</head>
+
+<body>
+<table border="1">
+    <TR>
+        <TH>User</TH>
+        <TH>Date</TH>
+        <TH>State</TH>
+        <TH>Laststate</TH>
+        <TH>Timestamp</TH>
+    </TR>
+{% for item in items %}
+<TR>
+    <TD>{{item.User}}</TD>
+   <TD>{{item.date}}</TD>
+   <TD>{{item.State}}</TD>
+   <TD>{{item.Laststate}}</TD>
+    <TD>{{item.Timestamp}}</TD>
+</TR>
+{% endfor %}
+</table>
+</body>
+</html>

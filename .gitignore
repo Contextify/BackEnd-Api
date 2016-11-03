@@ -1,0 +1,10 @@
+
+# Virtualenv
+.Python
+bin
+lib
+env
+include
+*.py[cod]
+*.json
+database
