@@ -17,12 +17,22 @@ def write_location(data):
 
 def update_prev_state(data):
 	loc=db.location
-	res=loc.find_one({"User":data['User'],"State":data["Laststate"],"End":"None","Start":data["Laststatetime"]})
+	d={"User":data['User'],"State":data["Laststate"],"End":"None","Start":data["Laststatetime"]}
+	res=loc.find_one(d)
 	if res:
-		loc.update({"_id":res["_id"]},{"End":data['Timestamp']})
+		loc.update(d,{"$set":{"End":data["Timestamp"]}},False,True)
 
 def get_states(user):
 	loc=db.location
 	print user
 	res=loc.find({"User":user})
 	return list(res)
+
+
+
+def make_table(user):
+	res=get_states(user)
+	for i in res:
+		print i
+
+make_table("Sriram")

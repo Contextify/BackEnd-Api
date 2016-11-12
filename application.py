@@ -6,6 +6,11 @@ from util import toEST
 app = Flask(__name__)
 
 
+@app.route("/")
+def id():
+	return "Contextify Homepage"
+
+
 @app.route("/user/<user>")
 def index(user):
     res=dbtest.get_states(user.title())

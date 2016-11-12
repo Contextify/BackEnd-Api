@@ -2,6 +2,7 @@
 import paho.mqtt.client as mqtt
 import dbtest
 import json
+import logger
 
 class MqttHandler():
     def __init__(self):

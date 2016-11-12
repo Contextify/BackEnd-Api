@@ -42,9 +42,8 @@ def write_HA():
     for i,j in zip(l,l[1:]):
         starttime=arrow.get(i[1])
         endtime=arrow.get(j[1])
-        diff=endtime.timestamp-starttime.timestamp
-        yield {"User":"Sriram","State":i[0],"Start":int(starttime.timestamp),"End":int(endtime.timestamp),"Diff":diff}
+        yield {"User":"Sriram","State":i[0],"Start":int(starttime.timestamp),"End":int(endtime.timestamp)}
 
 
-for i in list(write_HA()):
-    dbtest.write_location(i)
+# for i in list(write_HA()):
+#     dbtest.write_location(i)
