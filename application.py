@@ -1,7 +1,13 @@
 from flask import Flask,render_template,jsonify,Request,Response
-app = Flask(__name__)
 import json
 from DbHandler import get_states
+
+
+app = Flask(__name__)
+# app.config['MONGOALCHEMY_DATABASE'] = 'contextify'
+# db = MongoAlchemy(app)
+
+
 @app.route("/")
 def index():
     res=list(get_states())

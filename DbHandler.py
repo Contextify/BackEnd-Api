@@ -5,7 +5,6 @@ from os import path
 from config import DATABASE,arrow
 import dbtest
 
-
 @contextmanager
 def db_cursor():
     """ Use this as a context manager and it will automatically
@@ -36,35 +35,20 @@ def get_timestamps(i):
 
 
 
-def write_Loc_from_HA():
+
+def write_HA():
     with db_cursor() as c:
         c.execute("select state,last_changed from states where entity_id='sensor.location' and state!='unknown';")
         l=c.fetchall()
-    for i,j in zip(l,l[1:]):
+    l1=sorted(list(set(l)))
+    print len(l1)
+    for i,j in zip(l1,l1[1:]):
         starttime=arrow.get(i[1])
         endtime=arrow.get(j[1])
-        if i[0]!=j[0]:
-            yield {"User":"Sriram","State":i[0],"Start":int(starttime.timestamp),"End":int(endtime.timestamp)}
+        diff=endtime.timestamp-starttime.timestamp
+        yield {"User":"Sriram","State":i[0],"Start":int(starttime.timestamp),"End":int(endtime.timestamp),"Diff":diff}
 
-# for i in write_Loc_from_HA():
-#     print i
-#     dbtest.write_loc(i)
-# def get_sleep():
-#     with db_cursor() as c:
-#         c.execute("select state from states where entity_id='sensor.slept' and state!='unknown';")
-#         s=list(set(c.fetchall()))
-#         sleeplist=list(map(get_timestamps,s))
-#         c.execute("select state from states where entity_id='sensor.woke_up' and state!='unknown';")
-#         w=list(set(c.fetchall()))
-#         wokelist=list(map(get_timestamps,w))
-#         sleeplist=list(filter(lambda x:x!=None or x<0,sleeplist))
-#         wokelist=list(filter(lambda x:x!=None or x<0,wokelist))
-#         print len(sleeplist),len(wokelist)
-#         for i,j in zip(sorted(sleeplist),sorted(wokelist)):
-#             yield {"user":"sriram","slept":i,"woke":j,"duration":int(j-i)}
-#             x=i
-#             y=j
-#         print arrow.get(x).format("MM-DD-YY HH:mm")
-#
-# for i in list(get_Data()):
-#     print i
+res=list(write_HA())
+print len(res)
+for i in res:
+    dbtest.write_location(i)

@@ -3,21 +3,16 @@ import json
 import config
 import arrow
 
+client = MongoClient('localhost', 27017)
+db=client.contextify
 
-def get_db():
-    client = MongoClient('localhost:27017')
-    db = client.contextify
-    return db
-
-
-def write_loc(data):
-	db=get_db()
-	res=db.location.find(data)
-	if list(res):
+def write_location(data):
+	loc=db.location
+	res=loc.find_one(data)
+	print res
+	if res:
+		print "der\n"
 		return -1
-	db.location.insert(data)
+	loc.insert(data)
 	return 0
-
-
-
 
