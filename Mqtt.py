@@ -13,19 +13,15 @@ class MqttHandler():
         self.client.username_pw_set(self.username, self.password)
         self.client.connect(self.server,self.port, keepalive=60, bind_address="")
         self.client.subscribe("#", qos=1)
-        #self.client.message_callback_add("location",self.on_location)
+        self.client.message_callback_add("location",self.on_location)
         #self.client.message_callback_add("sleep",self.on_sleep)
 
     def on_location(self,client, userdata, msg):
         print msg.topic+" "+str(msg.payload)
         data=json.loads(msg.payload)
-        # db=dbtest.get_db()
-        # res=db.location.find({"User":data["User"],"State":data["State"],"Start":data["Timestamp"]})
-        # print list(res)
         d={"User":data["User"],"State":data["State"],"Start":data["Timestamp"],"End":"None"}
-        #dbtest.write_loc(d)
-        
-
+        dbtest.write_location(d)
+        dbtest.update_prev_state(data)
 
     def on_sleep(self,client,userdata,msg):
        print msg.topic+" "+str(msg.payload)

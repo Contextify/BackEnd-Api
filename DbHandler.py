@@ -34,21 +34,17 @@ def get_timestamps(i):
         return arrow.get(i[0]).timestamp 
 
 
-
-
+# written to migrate sqlite to Mongo
 def write_HA():
     with db_cursor() as c:
         c.execute("select state,last_changed from states where entity_id='sensor.location' and state!='unknown';")
         l=c.fetchall()
-    l1=sorted(list(set(l)))
-    print len(l1)
-    for i,j in zip(l1,l1[1:]):
+    for i,j in zip(l,l[1:]):
         starttime=arrow.get(i[1])
         endtime=arrow.get(j[1])
         diff=endtime.timestamp-starttime.timestamp
         yield {"User":"Sriram","State":i[0],"Start":int(starttime.timestamp),"End":int(endtime.timestamp),"Diff":diff}
 
-res=list(write_HA())
-print len(res)
-for i in res:
+
+for i in list(write_HA()):
     dbtest.write_location(i)
