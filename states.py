@@ -1,19 +1,39 @@
+import arrow
+import util
+import datetime
+import dbtest
+from collections import defaultdict
+days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 
-from util import getDay
 
-class State():
-	def __init__(self,name,start,end):
+
+
+
+class DayWise():
+	def __init__(self,name):
 		self.name=name
-		self.start=start
-		self.end=end
-		self.startday=None
-		self.endday=None
+		self.time=None
+		self.states=[]
+		self.timeframe=defaultdict(dict)
 
-	def get_day(self):
-		self.startday=getDay(self.start)
-		self.endday=getDay(self.end)
-		return self.startday
+	def set_state(self,state,starttime):
+		if state not in self.states:
+			self.states.append(state)
+		time=util.getHr(starttime)
+		try:
+			self.timeframe[time][state]+=1
+		except KeyError:
+			self.timeframe[time][state]=0
+
+	def getTimeFrame(self):
+		return self.timeframe
 
 
 
+def make_state_table():
+	global days
+	dayobjectmap={}
+	for d in days:
+		dayobjectmap[d]=DayWise(d)
+	
 

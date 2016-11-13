@@ -21,8 +21,8 @@ class MqttHandler():
         print msg.topic+" "+str(msg.payload)
         data=json.loads(msg.payload)
         d={"User":data["User"],"State":data["State"],"Start":data["Timestamp"],"End":"None"}
-        dbtest.write_location(d)
         dbtest.update_prev_state(data)
+        dbtest.write_location(d)
 
     def on_sleep(self,client,userdata,msg):
        print msg.topic+" "+str(msg.payload)

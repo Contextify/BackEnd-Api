@@ -2,8 +2,11 @@ from flask import Flask,render_template,jsonify,Request,Response
 import json
 import arrow
 import dbtest
-from util import toEST
+import util
+import states
 app = Flask(__name__)
+
+
 
 
 @app.route("/")
@@ -13,22 +16,20 @@ def id():
 
 @app.route("/user/<user>")
 def index(user):
-    res=dbtest.get_states(user.title())
-    data=[]
-    for i in res:
-    	start=int(toEST(i['Start']))*1000
-    	if i["End"]!="None":
-    		end=int(toEST(i['End']))*1000	
-    	else:
-    		end=int(toEST(arrow.now().timestamp)*1000)
-    	a={"content":i['State'],"start":start,"end":end}
-    	data.append(a)
-    return jsonify(data)
+	res=dbtest.get_states(user.title())
+	data=util.gettimeresp(res)
+	return jsonify(data)
     
 @app.route("/timeline")
 def tm():
     print "Timeline requested"
     return app.send_static_file('timeline.html')
-   
+
+@app.route("/user/<user>/today")
+def today(user):
+	res=dbtest.get_states_day(user)
+	return jsonify(util.gettimeresp(res))
+
+
 if __name__=="__main__":
 	app.run(host="0.0.0.0",port=4000)

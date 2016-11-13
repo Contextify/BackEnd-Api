@@ -3,15 +3,12 @@ from bson.objectid import ObjectId
 import json
 import config
 import arrow
-from states import State
+import util
+from collections import defaultdict,Counter
+
 client = MongoClient('localhost', 27017)
 db=client.contextify
 
-
-states=["Home","NearHome","Class","Outside"."Work","Library"]
-
-statecount=[[0]*7]*6
-print statecount
 def write_location(data):
 	loc=db.location
 	res=loc.find_one(data)
@@ -27,20 +24,13 @@ def update_prev_state(data):
 	if res:
 		loc.update(d,{"$set":{"End":data["Timestamp"]}},False,True)
 
-def get_states(user):
+def get_states(user,day=None):
+
 	loc=db.location
-	print user
 	res=loc.find({"User":user})
 	return list(res)
 
-
-
-def make_table(user):
-	res=get_states(user)
-	for i in res:
-		if i["End"]!="None":
-			s=State(i["State"],i["Start"],i["End"])
-			day=s.get_day()
-			statecount[day][i["State"]]+=1
-	print statecount	
-make_table("Sriram")
+def get_states_day(user):
+	loc=db.location
+	yest=arrow.utcnow().replace(hours=-24).timestamp
+	return list(db.location.find({"User":user,"Start":{"$gt":yest}}))
