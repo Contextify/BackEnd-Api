@@ -3,10 +3,15 @@ from bson.objectid import ObjectId
 import json
 import config
 import arrow
-
+from states import State
 client = MongoClient('localhost', 27017)
 db=client.contextify
 
+
+states=["Home","NearHome","Class","Outside"."Work","Library"]
+
+statecount=[[0]*7]*6
+print statecount
 def write_location(data):
 	loc=db.location
 	res=loc.find_one(data)
@@ -33,6 +38,9 @@ def get_states(user):
 def make_table(user):
 	res=get_states(user)
 	for i in res:
-		print i
-
+		if i["End"]!="None":
+			s=State(i["State"],i["Start"],i["End"])
+			day=s.get_day()
+			statecount[day][i["State"]]+=1
+	print statecount	
 make_table("Sriram")
