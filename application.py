@@ -6,9 +6,6 @@ import util
 import states
 app = Flask(__name__)
 
-
-
-
 @app.route("/")
 def id():
 	return "Contextify Homepage"
