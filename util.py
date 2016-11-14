@@ -3,6 +3,9 @@ import arrow
 def toEST(UTCtimestamp):
 	return arrow.get(UTCtimestamp).to("US/Eastern").timestamp
 
+def toESTHr(UTCtimestamp):
+	return arrow.get(UTCtimestamp).to("US/Eastern").format("HH")
+	
 def getDay(timestamp):
 	return arrow.get(timestamp).format("dddd")
 

@@ -14,6 +14,7 @@ def write_location(data):
 	res=loc.find_one(data)
 	if res:
 		return -1
+	db.states.insert({"Current":data["State"]})
 	loc.insert(data)
 	return 0
 
@@ -32,19 +33,21 @@ def get_states(user,day=None):
 def get_states_by_day(user,day):
 	days={"Sunday":1,"Monday":2,"Tuesday":3,"Wednesday":4,"Thursday":5,"Friday":6,"Saturday":7}
 	loc=db.location
-	res=loc.aggregate([
-{
-    "$project": {
-        "dow": { "$dayOfWeek": "$Startdate" },
-        "State": "$State",
-        "User":"$User"
-    }
-},
-{ 
-    "$match": { 
-        "User":user,
-        "dow": days[day]
-    }
-}])
+	s=days[day]
+	pipe=[
+	{
+	    "$project": {
+	        "dow": { "$dayOfWeek": "$Startdate" },
+	        "State":"$State",
+	        "User":"$User",
+	        "Start":"$Start",
+	        "End":"$End",
+	    }
+	},
+	{ 
+	    "$match": {"User":user,"dow":s}
+	}
+	]
+	res=loc.aggregate(pipeline=pipe)
+	return res["result"]
 
-get_states_by_day("Sriram","Wednesday")
