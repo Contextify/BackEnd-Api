@@ -45,5 +45,5 @@ def write_HA():
         yield {"User":"Sriram","State":i[0],"Start":int(starttime.timestamp),"End":int(endtime.timestamp)}
 
 
-for i in list(write_HA()):
-    dbtest.write_location(i)
+# for i in list(write_HA()):
+#     dbtest.write_location(i)

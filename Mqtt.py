@@ -1,7 +1,7 @@
 
 import paho.mqtt.client as mqtt
 import dbtest
-import json
+import json,arrow
 import logger
 
 class MqttHandler():
@@ -20,7 +20,7 @@ class MqttHandler():
     def on_location(self,client, userdata, msg):
         print msg.topic+" "+str(msg.payload)
         data=json.loads(msg.payload)
-        d={"User":data["User"],"State":data["State"],"Start":data["Timestamp"],"End":"None"}
+        d={"User":data["User"],"State":data["State"],"Start":data["Timestamp"],"Startdate":arrow.get(data["Timestamp"]).datetime,"End":"None"}
         dbtest.update_prev_state(data)
         dbtest.write_location(d)
 
