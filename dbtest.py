@@ -29,7 +29,22 @@ def get_states(user,day=None):
 	res=loc.find({"User":user})
 	return list(res)
 
-def get_states_day(user):
+def get_states_by_day(user,day):
+	days={"Sunday":1,"Monday":2,"Tuesday":3,"Wednesday":4,"Thursday":5,"Friday":6,"Saturday":7}
 	loc=db.location
-	yest=arrow.utcnow().replace(hours=-24).timestamp
-	return list(db.location.find({"User":user,"Start":{"$gt":yest}}))
+	res=loc.aggregate([
+{
+    "$project": {
+        "dow": { "$dayOfWeek": "$Startdate" },
+        "State": "$State",
+        "User":"$User"
+    }
+},
+{ 
+    "$match": { 
+        "User":user
+        "dow": days[day]
+    }
+}])
+
+get_states_by_day("Sriram","Wednesday")
