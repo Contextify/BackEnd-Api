@@ -42,7 +42,7 @@ def get_states_by_day(user,day):
 },
 { 
     "$match": { 
-        "User":user
+        "User":user,
         "dow": days[day]
     }
 }])
