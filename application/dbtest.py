@@ -20,7 +20,7 @@ def write_location(data):
 
 def update_prev_state(data):
 	loc=db.location
-	d={"User":data['User'],"State":data["Laststate"],"End":"None"}
+	d={"User":data['User'],"End":"None"}
 	res=loc.find_one(d)
 	if res:
 		loc.update(d,{"$set":{"End":arrow.utcnow().timestamp,"Enddate":arrow.utcnow().datetime}},False,True)
