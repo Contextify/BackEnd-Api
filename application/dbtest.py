@@ -23,7 +23,7 @@ def update_prev_state(data):
 	d={"User":data['User'],"State":data["Laststate"],"End":"None"}
 	res=loc.find_one(d)
 	if res:
-		loc.update(d,{"$set":{"End":data["Timestamp"],"Enddate":arrow.get(data["Timestamp"]).datetime}},False,True)
+		loc.update(d,{"$set":{"End":arrow.utcnow().timestamp,"Enddate":arrow.utcnow().datetime}},False,True)
 
 def get_states(user,day=None):
 	loc=db.location
@@ -34,6 +34,7 @@ def get_states_by_day(user,day):
 	days={"Sunday":1,"Monday":2,"Tuesday":3,"Wednesday":4,"Thursday":5,"Friday":6,"Saturday":7}
 	loc=db.location
 	s=days[day]
+
 	pipe=[
 	{
 	    "$project": {
@@ -44,10 +45,9 @@ def get_states_by_day(user,day):
 	        "End":"$End",
 	    }
 	},
-	{ 
+	{
 	    "$match": {"User":user,"dow":s}
 	}
 	]
 	res=loc.aggregate(pipeline=pipe)
 	return res["result"]
-
