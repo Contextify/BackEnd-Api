@@ -23,7 +23,7 @@ def update_prev_state(data):
 	d={"User":data['User'],"End":"None"}
 	res=loc.find_one(d)
 	if res:
-		loc.update(d,{"$set":{"End":arrow.utcnow().timestamp,"Enddate":arrow.utcnow().datetime}},False,True)
+		loc.update(d,{"$set":{"End":arrow.get(data["Timestamp"]).to("utc"),"Enddate":arrow.get(data["Timestamp"]).to("utc").datetime}},False,True)
 
 def get_states(user,day=None):
 	loc=db.location
