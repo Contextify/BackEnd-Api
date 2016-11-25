@@ -17,8 +17,8 @@ def index(user):
 	data=util.gettimeresp(res)
 	return jsonify(data)
     
-@app.route("/timeline/<user>",methods=['GET', 'POST'])
-def tm(u):
+@app.route("/timeline/<user>")
+def tm():
     print "Timeline requested"
     
     return app.send_static_file('timeline.html',user=user)
