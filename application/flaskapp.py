@@ -1,4 +1,4 @@
-from flask import Flask,render_template,jsonify,Request,Response
+from flask import Flask,render_template,jsonify,request,Response
 import json
 import arrow
 import dbtest
@@ -20,7 +20,7 @@ def index(user):
 @app.route("/timeline",methods=['GET', 'POST'])
 def tm():
     print "Timeline requested"
-    username = Request.form['user']
+    username = request.form['user']
     print(username)
     return app.send_static_file('timeline.html')
 
