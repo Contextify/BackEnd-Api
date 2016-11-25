@@ -18,7 +18,7 @@ def index(user):
 	return jsonify(data)
     
 @app.route("/timeline/<user>")
-def tm():
+def tm(user):
     print "Timeline requested"
     
     return app.send_static_file('timeline.html',user=user)
