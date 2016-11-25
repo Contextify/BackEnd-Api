@@ -12,10 +12,10 @@
     <link rel="stylesheet" type="text/css" href="../static/timeline.css"></link>
      <script>
     $( document ).ready(function() {
-        console.log( "document loaded" );
+        console.log( "document loaded " );
 
         $.ajax({
-        	  url: 'http://home.sriramsv.com:5000/user/Sriram',
+        	  url: 'http://home.sriramsv.com:5000/user/'+user,
         	  //data: data,
         	  success: function(data) {
                  console.log(data);
