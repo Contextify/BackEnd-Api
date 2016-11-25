@@ -22,7 +22,8 @@ def tm(user):
     print "Timeline requested"
     
     #return app.send_static_file('timeline.html',user=user)
-return app.render_template('timeline.html',user=user)
+
+return render_template('timeline.html',user=user)
 
 
 if __name__=="__main__":
