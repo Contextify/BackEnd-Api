@@ -20,7 +20,7 @@ def index(user):
 @app.route("/timeline",methods=['GET', 'POST'])
 def tm():
     print "Timeline requested"
-    username = request.form['user']
+    username = Request.form['user']
     print(username)
     return app.send_static_file('timeline.html')
 
