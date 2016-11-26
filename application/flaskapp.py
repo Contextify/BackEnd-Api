@@ -17,13 +17,13 @@ def index(user):
 	data=util.gettimeresp(res)
 	return jsonify(data)
     
-@app.route("/timeline/<user>")
-def tm(user):
+@app.route("/timeline", methods=['GET','POST'])
+def tm():
     print "Timeline requested"
-    
+    user=request.args.get('user')
     #return app.send_static_file('timeline.html',user=user)
 
-return render_template('timeline.html',user=user)
+    return render_template('timeline.html',user=user)
 
 
 if __name__=="__main__":
