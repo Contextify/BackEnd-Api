@@ -15,7 +15,7 @@
         console.log( "document loaded " );
 
         $.ajax({
-        	  url: 'http://home.sriramsv.com:5000/user/'+user,
+        	  url: "http://home.sriramsv.com:5000/user/{{user}}",
         	  //data: data,
         	  success: function(data) {
                  console.log(data);

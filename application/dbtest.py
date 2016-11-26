@@ -4,9 +4,14 @@ import json
 import config
 import arrow
 import util
-from collections import defaultdict,Counter
+from collections import defaultdict
+import os
 
-client = MongoClient('localhost', 27017)
+if util.getHostname()=="home.sriramsv.com":
+	client = MongoClient('localhost', 27017)
+else:
+	client=MongoClient('home.sriramsv.com',8000)
+
 db=client.contextify
 
 def write_location(data):
@@ -23,9 +28,9 @@ def update_prev_state(data):
 	d={"User":data['User'],"End":"None"}
 	res=loc.find_one(d)
 	if res:
-		loc.update(d,{"$set":{"End":arrow.get(data["Timestamp"]).to("utc"),"Enddate":arrow.get(data["Timestamp"]).to("utc").datetime}},False,True)
+		loc.update(d,{"$set":{"End":arrow.get(data["Timestamp"]).to("utc").timestamp,"Enddate":arrow.get(data["Timestamp"]).to("utc").datetime}},False,True)
 
-def get_states(user,day=None):
+def get_states(user):
 	loc=db.location
 	res=loc.find({"User":user})
 	return list(res)
