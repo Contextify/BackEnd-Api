@@ -23,7 +23,7 @@ def tm():
     user=request.args.get('user')
     #return app.send_static_file('timeline.html',user=user)
 
-    return render_template('timeline.html',user=user)
+    return render_template('static/timeline.html',user=user)
 
 
 if __name__=="__main__":
