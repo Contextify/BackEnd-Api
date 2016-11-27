@@ -15,13 +15,39 @@ def write_location(data):
 	res=loc.find_one(data)
 	if res:
 		return -1
-	db.states.insert({"Current":data["State"]})
 	loc.insert(data)
 	return 0
 
 def update_prev_state(data):
 	loc=db.location
-	d={"User":data['User'],"End":"None"}
+	d={"User":data['User'],"State":data["Laststate"],"End":"None"}
 	res=loc.find_one(d)
 	if res:
 		loc.update(d,{"$set":{"End":arrow.get(data["Timestamp"]).to("utc").timestamp,"Enddate":arrow.get(data["Timestamp"]).to("utc").datetime}},False,True)
+
+
+def get_states_by_day(self,user,day=None):
+	if not user or not day:
+		return -1
+	day=day.title()
+	days={"Sunday":1,"Monday":2,"Tuesday":3,"Wednesday":4,"Thursday":5,"Friday":6,"Saturday":7}
+	loc=db.location
+	s=days[day]
+	pipe=[
+	{
+		"$project": {
+			"_id":0,
+			"User":"$User",
+			"Starthour":{"$hour":"$Startdate"},
+			"dow": { "$dayOfWeek": "$Startdate" },
+			"State":"$State",
+			"Start":"$Start",
+			"End":"$End",
+		}
+	},
+	{
+		"$match": {"User":user,"dow":s}
+	}
+	]
+	res=loc.aggregate(pipeline=pipe)
+	return res["result"]

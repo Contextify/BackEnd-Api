@@ -17,14 +17,23 @@ def getDay(timestamp):
 def getHr(timestamp):
 	return arrow.get(timestamp).format("HH")
 
+def getdatetime(timestamp):
+	return arrow.get(timestamp).to("US/Eastern").datetime
+
 def gettimeresp(res):
 	data=[]
 	for i in res:
-		start=int(toEST(i['Start']))*1000
+		start=int(toEST(i['Start']))
+		startdate=getdatetime(start)
+		start*=1000
 		if i["End"]!="None":
-			end=int(toEST(i['End']))*1000
+			end=int(toEST(i['End']))
+			enddate=getdatetime(end)
+			end*=1000
 		else:
+			enddate=arrow.now().datetime
 			end=int(toEST(arrow.now().timestamp)*1000)
-		a={"content":i['State'],"start":start,"end":end}
+		a={"content":i['State'],"start":start,"end":end,"startdate":startdate,"enddate":enddate}
 		data.append(a)
+		data.sort(key=lambda x:x['start'])
 	return data

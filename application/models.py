@@ -14,35 +14,26 @@ class User():
     def __repr__(self):
         return self.name
 
-    def get_states(self):
-    	loc=self.db.location
-    	res=loc.find({"User":self.name})
+    def get_states(self,start=None,end=None):
+        loc=self.db.location
+        if start and end:
+            res=loc.find({"User":self.name,"Start":{"$gt":start,"$lt":end}})
+        elif start and end==None:
+            res=loc.find({"User":self.name,"Start":{"$gt":start}})
+        else:
+            res=loc.find({"User":self.name})
         return list(res)
 
-    def get_states_by_day(self,day=None):
-        if day:
-            day=day.title()
-    	days={"Sunday":1,"Monday":2,"Tuesday":3,"Wednesday":4,"Thursday":5,"Friday":6,"Saturday":7}
-    	loc=self.db.location
-    	s=days[day]
-    	pipe=[
-    	{
-    	    "$project": {
-                "_id":0,
-                "User":"$User",
-                "Starthour":{"$hour":"$Startdate"},
-    	        "dow": { "$dayOfWeek": "$Startdate" },
-    	        "State":"$State",
-    	        "Start":"$Start",
-    	        "End":"$End",
-    	    }
-    	},
-    	{
-    	    "$match": {"User":self.name,"dow":s}
-    	}
-    	]
-    	res=loc.aggregate(pipeline=pipe)
-        return res["result"]
+    def getStatesByDay(self,day=None):
+        if not day:
+            for day in self.days.values():
+                res=self.get_states_by_day(day)
+                self.dayprob[day]=res
+            return self.dayprob
+
+        res=self.get_states_by_day(day)
+        self.dayprob[day]=res
+        return self.dayprob
 
     def calc_prob(self,day=None):
         if not day:
