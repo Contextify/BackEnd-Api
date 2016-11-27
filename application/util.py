@@ -1,10 +1,10 @@
 import arrow
 
-
+from config import Timezone
 def getHostname():
 	import socket
 	return socket.gethostname()
-	
+
 def toEST(UTCtimestamp):
 	return arrow.get(UTCtimestamp).to("US/Eastern").timestamp
 

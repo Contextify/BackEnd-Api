@@ -24,9 +24,16 @@ class UserDatabyDay(Resource):
 		res=user.get_states_by_day(day)
 		return jsonify(res)
 
+class UserProb(Resource):
+	def get(self,username):
+		user=models.User(username)
+		res=user.calc_prob()
+		return jsonify(res)
+
 api.add_resource(HelloWorld, '/')
 api.add_resource(UserData,"/user/<string:username>")
 api.add_resource(UserDatabyDay,"/user/<string:username>/<string:day>")
+api.add_resource(UserProb,"/user/<string:username>/prob")
 
 if __name__=="__main__":
 	app.run(host="0.0.0.0",port=4000)

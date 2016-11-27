@@ -1,6 +1,7 @@
 import dbtest
 import util
 from pymongo import MongoClient,errors
+from collections import defaultdict,OrderedDict
 
 class User():
     def __init__(self,name):
@@ -8,6 +9,7 @@ class User():
         self.days={1:"Sunday",2:"Monday",3:"Tuesday",4:"Wednesday",5:"Thursday",6:"Friday",7:"Saturday"}
         self.dbclient = MongoClient('localhost', 27017)
         self.db=self.dbclient.contextify
+        self.dayprob=defaultdict(dict)
 
     def __repr__(self):
         return self.name
@@ -28,6 +30,7 @@ class User():
     	    "$project": {
                 "_id":0,
                 "User":"$User",
+                "Starthour":{"$hour":"$Startdate"},
     	        "dow": { "$dayOfWeek": "$Startdate" },
     	        "State":"$State",
     	        "Start":"$Start",
@@ -39,6 +42,10 @@ class User():
     	}
     	]
     	res=loc.aggregate(pipeline=pipe)
-
-        print list(res)
         return res["result"]
+
+    def calc_prob(self):
+        for day in self.days.values():
+            res=self.get_states_by_day(day)
+            self.dayprob[day]=res
+        return self.dayprob
