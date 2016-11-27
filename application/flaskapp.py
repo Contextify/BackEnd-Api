@@ -1,5 +1,5 @@
 from flask import Flask,render_template,jsonify,request,Response
-from flask_restful import Resource,Api
+from flask_restful import Resource,Api,reqparse
 import json
 import arrow
 import util
@@ -25,10 +25,15 @@ class UserDatabyDay(Resource):
 		return jsonify(res)
 
 class UserProb(Resource):
-	def get(self,username):
-		user=models.User(username)
-		res=user.calc_prob()
-		return jsonify(res)
+    def get(self,username):
+        parser = reqparse.RequestParser()
+        parser.add_argument('day', type=str)
+        args = parser.parse_args()
+        day = args.get('day')
+        print day
+        user=models.User(username)
+        res=user.calc_prob(day)
+        return jsonify(res)
 
 api.add_resource(HelloWorld, '/')
 api.add_resource(UserData,"/user/<string:username>")

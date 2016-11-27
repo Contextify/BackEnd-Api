@@ -44,8 +44,13 @@ class User():
     	res=loc.aggregate(pipeline=pipe)
         return res["result"]
 
-    def calc_prob(self):
-        for day in self.days.values():
-            res=self.get_states_by_day(day)
-            self.dayprob[day]=res
+    def calc_prob(self,day=None):
+        if not day:
+            for day in self.days.values():
+                res=self.get_states_by_day(day)
+                self.dayprob[day]=res
+            return self.dayprob
+
+        res=self.get_states_by_day(day)
+        self.dayprob[day]=res
         return self.dayprob
