@@ -12,14 +12,15 @@ class HelloWorld(Resource):
     def get(self):
         return "contextify Backend API"
 
-api.add_resource(HelloWorld, '/')
+class UserData(Resource):
+	def get(self,username):
+		user=models.User(username)
+		res=util.gettimeresp(user.get_states())
+		return jsonify(res)
 
-# @app.route("/user/<user>")
-# def index(user):
-# 	s=models.User(user)
-# 	res=s.get_states_by_day()
-# 	data=util.gettimeresp(res)
-# 	return jsonify(data)
+
+api.add_resource(HelloWorld, '/')
+api.add_resource(UserData,"/user/<string:username>")
 
 if __name__=="__main__":
 	app.run(host="0.0.0.0",port=4000)

@@ -10,7 +10,7 @@ class User():
         return self.name
 
     def get_states(self):
-    	loc=db.location
+    	loc=dbtest.db.location
     	res=loc.find({"User":self.name})
         return list(res)
 
