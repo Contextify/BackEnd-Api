@@ -1,9 +1,8 @@
 from flask import Flask,render_template,jsonify,request,Response
 import json
 import arrow
-import dbtest
 import util
-import states
+import models
 app = Flask(__name__)
 
 @app.route("/")
@@ -12,7 +11,8 @@ def id():
 
 @app.route("/user/<user>")
 def index(user):
-	res=dbtest.get_states(user.title())
+	s=models.User(user)
+	res=s.get_states_by_day()
 	data=util.gettimeresp(res)
 	return jsonify(data)
 
