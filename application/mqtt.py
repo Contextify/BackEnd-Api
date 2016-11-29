@@ -15,7 +15,6 @@ class MqttHandler():
         self.client.connect(self.server,self.port, keepalive=60, bind_address="")
         self.client.subscribe("#", qos=1)
         self.client.message_callback_add("location",self.on_location)
-        #self.client.message_callback_add("sleep",self.on_sleep)
 
     def on_location(self,client, userdata, msg):
         data=json.loads(msg.payload)
@@ -23,11 +22,6 @@ class MqttHandler():
         dbtest.update_prev_state(data)
         dbtest.write_location(d)
 
-    def on_sleep(self,client,userdata,msg):
-       print msg.topic+" "+str(msg.payload)
-       data=json.loads(msg.payload)
-       data["duration"]=data['Woke']-data['Sleep']
-       dbtest.write_sleep(data)
 
     def run(self):
         try:

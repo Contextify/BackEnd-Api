@@ -1,4 +1,4 @@
-from flask import Flask,render_template,jsonify,request,Response
+from flask import Flask,render_template,jsonify,request,Response,url_for,make_response
 from flask_restful import Resource,Api,reqparse
 import json
 import arrow
@@ -11,6 +11,12 @@ api = Api(app)
 class HelloWorld(Resource):
     def get(self):
         return "Contextify Backend API"
+
+# @api.representation('application/json')
+# def output_json(data, code, headers=None):
+#     resp = make_response(json.dumps(data), code)
+#     resp.headers.extend(headers or {})
+#     return resp
 
 class UserData(Resource):
     def get(self,username):
@@ -34,10 +40,14 @@ class UserProb(Resource):
         res=user.calc_prob(day)
         return jsonify(res)
 
+class Timeline(Resource):
+    def get(self):
+        return app.send_static_file('timeline.html')
+
 api.add_resource(HelloWorld, '/')
 api.add_resource(UserData,"/user/<string:username>")
-# api.add_resource(UserDatabyDay,"/user/<string:username>/day")
 api.add_resource(UserProb,"/user/<string:username>/prob")
+api.add_resource(Timeline,"/timeline")
 
 if __name__=="__main__":
 	app.run(host="0.0.0.0",port=4000)

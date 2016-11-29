@@ -15,8 +15,9 @@
         console.log( "document loaded " );
 
         $.ajax({
-        	  url: "http://home.sriramsv.com:5000/user/{{user}}",
-        	  //data: data,
+            type:"GET",
+        	  url: "http://home.sriramsv.com:5000/user/sriram",
+            contentType: "application/json; charset=utf-8",
         	  success: function(data) {
                  console.log(data);
     // specify options
@@ -33,24 +34,24 @@
         timeline.draw(data);
 
               },
-              contentType : 'application/json'   
+              contentType : 'application/json'
         	  //dataType: "json"
         	});
     });
 
-	
-        
-      
-    
-    
-   
+
+
+
+
+
+
     </script>
-    
-    
-    
-    
-   
-   
+
+
+
+
+
+
 </head>
 
 

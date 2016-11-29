@@ -33,7 +33,7 @@ def gettimeresp(res):
 		else:
 			enddate=arrow.now().datetime
 			end=int(toEST(arrow.now().timestamp)*1000)
-		a={"content":i['State'],"start":start,"end":end,"startdate":startdate,"enddate":enddate}
+		a={"content":i['State'],"start":start,"end":end}
 		data.append(a)
 		data.sort(key=lambda x:x['start'])
 	return data
