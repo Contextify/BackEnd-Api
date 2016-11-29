@@ -1,5 +1,6 @@
 from flask import Flask,render_template,jsonify,request,Response,url_for,make_response
 from flask_restful import Resource,Api,reqparse
+from flask_cors import CORS, cross_origin
 import json
 import arrow
 import util
@@ -8,15 +9,10 @@ import models
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app, resources={r"/user/*": {"origins": "*"}})
 class HelloWorld(Resource):
     def get(self):
         return "Contextify Backend API"
-
-# @api.representation('application/json')
-# def output_json(data, code, headers=None):
-#     resp = make_response(json.dumps(data), code)
-#     resp.headers.extend(headers or {})
-#     return resp
 
 class UserData(Resource):
     def get(self,username):
@@ -30,12 +26,18 @@ class UserData(Resource):
         res=util.gettimeresp(user.get_states(start,end))
         return jsonify(res)
 
+class StatePercent(Resource):
+    def get(self,username):
+        user=models.User(username)
+        return jsonify(user.get_states_percent())
+
 class UserProb(Resource):
     def get(self,username):
         parser = reqparse.RequestParser()
         parser.add_argument('day', type=str)
         args = parser.parse_args()
         day = args.get('day')
+        print day
         user=models.User(username)
         res=user.calc_prob(day)
         return jsonify(res)
@@ -47,6 +49,7 @@ class Timeline(Resource):
 api.add_resource(HelloWorld, '/')
 api.add_resource(UserData,"/user/<string:username>")
 api.add_resource(UserProb,"/user/<string:username>/prob")
+api.add_resource(StatePercent,"/user/<string:username>/states")
 api.add_resource(Timeline,"/timeline")
 
 if __name__=="__main__":

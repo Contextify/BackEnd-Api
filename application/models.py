@@ -1,8 +1,10 @@
 import dbtest
 import util
 from pymongo import MongoClient,errors
-from collections import defaultdict,OrderedDict
+from collections import defaultdict,OrderedDict,namedtuple
+import config
 
+# def daytoHr(day,)
 class User():
     def __init__(self,name):
         self.name=name.title()
@@ -24,17 +26,31 @@ class User():
             res=loc.find({"User":self.name})
         return list(res)
 
+    def get_states_percent(self):
+        statecount=[]
+        totalcount=self.db.location.find({"User":self.name}).count()
+        for state in config.states:
+            d={}
+            d["State"]=state
+            d["Count"]=self.db.location.find({"User":self.name,"State":state}).count()
+            d["Percent"]=d["Count"]*100/float(totalcount)
+            statecount.append(d)
+        return statecount
+
     def getStatesByDay(self,day=None):
         if not day:
             for day in self.days.values():
                 res=dbtest.get_states_by_day(self.name,day)
                 self.dayprob[day]=res
             return self.dayprob
-
         res=dbtest.get_states_by_day(self.name,day)
         self.dayprob[day]=res
         return self.dayprob
 
     def calc_prob(self,day=None):
-        res=self.getStatesByDay()
-        return res
+        if not day:
+            for d in self.days.values():
+                hrdict=defaultdict(list)
+                res=self.getStatesByDay(d)
+            return res
+        return self.getStatesByDay(day)
