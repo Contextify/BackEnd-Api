@@ -26,7 +26,7 @@ def update_prev_state(data):
 		loc.update(d,{"$set":{"End":arrow.get(data["Timestamp"]).to("utc").timestamp,"Enddate":arrow.get(data["Timestamp"]).to("utc").datetime}},False,True)
 
 
-def get_states_by_day(user,day=None):
+def get_states_by_day(user,day=None,state=None):
 	if user==None or day==None:
 		return -1
 	day=day.title()
@@ -50,4 +50,7 @@ def get_states_by_day(user,day=None):
 	}
 	]
 	res=loc.aggregate(pipeline=pipe)
-	return list(res)
+	try:
+		return list(res["result"])
+	except TypeError:
+		return list(res)

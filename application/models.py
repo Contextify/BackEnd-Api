@@ -3,15 +3,58 @@ import util
 from pymongo import MongoClient,errors
 from collections import defaultdict,OrderedDict,namedtuple
 import config
+import json
 
-# def daytoHr(day,)
+statemap={1:"Home",2:"NearHome",3:"Outside",4:"Work",5:"Class",6:"Library"}
+transprob=defaultdict(list,
+    ((1,[0,1,0,0,0,0]),
+    (2,[0.33,0,0.33,0.33,0,0]),
+    (3,[0,0.33,0,0,0.33,0.33]),
+    (4,[0,1,0,0,0,0]),
+    (5,[0,0,1,0,0,0]),
+    (6,[0,0,1,0,0,0])
+    ))
+
+class Day():
+    def __init__(self,name):
+        self.name=name
+        self.hourdict=defaultdict(dict)
+        self.d={}
+        self.probdict=defaultdict(dict)
+
+    def addcount(self,hour,state):
+        try:
+            self.hourdict[int(hour)][state]+=1
+        except KeyError:
+            self.hourdict[int(hour)][state]=1
+
+    def getcount(self):
+        return self.hourdict
+
+    def getprob(self):
+        for i,v in self.hourdict.items():
+            total=sum(v.values())
+            for k,v1 in v.items():
+                self.probdict[i][k]=v1/float(total)
+        return self.probdict
+
 class User():
     def __init__(self,name):
         self.name=name.title()
-        self.days={1:"Sunday",2:"Monday",3:"Tuesday",4:"Wednesday",5:"Thursday",6:"Friday",7:"Saturday"}
+        self.days={"Sunday":1,"Monday":2,"Tuesday":3,"Wednesday":4,"Thursday":5,"Friday":6,"Saturday":7}
         self.dbclient = MongoClient('localhost', 27017)
         self.db=self.dbclient.contextify
-        self.dayprob=defaultdict(dict)
+        self.dayprob={}
+        for d in self.days.keys():
+            self.dayprob[d]=Day(d)
+
+    def retdict(self,dayprob,day=None):
+        a=defaultdict(lambda: defaultdict(dict))
+        if not day:
+            for k,v in dayprob.items():
+                a[k]=v.getprob()
+            return a
+        return dayprob[day].getprob()
 
     def __repr__(self):
         return self.name
@@ -47,10 +90,29 @@ class User():
         self.dayprob[day]=res
         return self.dayprob
 
+    def _calc_prob(self,res):
+        for i in res:
+            if i["End"]=="None":
+                continue
+            for d,_ in util.timerange(i["Start"],i["End"]):
+                day=util.toESTday(d.timestamp)
+                hr=util.toESTHr(d.timestamp)
+                state=i["State"]
+                self.dayprob[day].addcount(hr,state)
+        return self.dayprob
+
+
     def calc_prob(self,day=None):
-        if not day:
-            for d in self.days.values():
-                hrdict=defaultdict(list)
-                res=self.getStatesByDay(d)
+        res=None
+        if day:
+            res=dbtest.get_states_by_day(self.name,day)
+            res=self._calc_prob(res)
+            res=self.retdict(res)
+            return {day:res[day]}
+        else:
+            for d in self.days.keys():
+                res=dbtest.get_states_by_day(self.name,d)
+                print res
+                res=self._calc_prob(res)
+                res=self.retdict(res)
             return res
-        return self.getStatesByDay(day)

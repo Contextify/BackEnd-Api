@@ -1,6 +1,7 @@
 import arrow
 
 from config import Timezone
+
 def getHostname():
 	import socket
 	return socket.gethostname()
@@ -11,6 +12,9 @@ def toEST(UTCtimestamp):
 def toESTHr(UTCtimestamp):
 	return arrow.get(UTCtimestamp).to("US/Eastern").format("HH")
 
+def toESTday(UTCtimestamp):
+	return arrow.get(UTCtimestamp).to("US/Eastern").format("dddd")
+	
 def getDay(timestamp):
 	return arrow.get(timestamp).format("dddd")
 
@@ -20,6 +24,10 @@ def getHr(timestamp):
 def getdatetime(timestamp):
 	return arrow.get(timestamp).to("US/Eastern").datetime
 
+def timerange(start,end):
+	start=getdatetime(start)
+	end=getdatetime(end)
+	return arrow.Arrow.span_range('hour', start, end)
 def gettimeresp(res):
 	data=[]
 	for i in res:

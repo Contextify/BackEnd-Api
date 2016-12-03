@@ -7,3 +7,4 @@ HA_PASSWORD="gooddeeds"
 Timezone="US/Eastern"
 
 states=["Home","Outside","Class","Library","Work","NearHome"]
+days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]

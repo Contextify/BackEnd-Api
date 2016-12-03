@@ -5,11 +5,10 @@ import json
 import arrow
 import util
 import models
-
-
 app = Flask(__name__)
 api = Api(app)
 CORS(app, resources={r"/user/*": {"origins": "*"}})
+
 class HelloWorld(Resource):
     def get(self):
         return "Contextify Backend API"
@@ -37,7 +36,7 @@ class UserProb(Resource):
         parser.add_argument('day', type=str)
         args = parser.parse_args()
         day = args.get('day')
-        print day
+        print day,type(day)
         user=models.User(username)
         res=user.calc_prob(day)
         return jsonify(res)
