@@ -21,7 +21,7 @@ class Day():
         self.hourdict=defaultdict(dict)
         self.d={}
         self.probdict=defaultdict(dict)
-
+        self.probmax={}
     def addcount(self,hour,state):
         try:
             self.hourdict[int(hour)][state]+=1
@@ -34,10 +34,17 @@ class Day():
     def getprob(self):
         for i,v in self.hourdict.items():
             total=sum(v.values())
+            max1=0
+            maxstate=None
             for k,v1 in v.items():
-                self.probdict[i][k]=v1/float(total)
-        return self.probdict
-
+                prob=v1/float(total)
+                self.probdict[i][k]=prob
+                if max1<prob:
+                    maxstate=k
+                    max1=prob
+            self.probmax[i]=maxstate
+        return self.probmax
+        
 class User():
     def __init__(self,name):
         self.name=name.title()
