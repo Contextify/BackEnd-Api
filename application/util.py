@@ -14,7 +14,7 @@ def toESTHr(UTCtimestamp):
 
 def toESTday(UTCtimestamp):
 	return arrow.get(UTCtimestamp).to("US/Eastern").format("dddd")
-	
+
 def getDay(timestamp):
 	return arrow.get(timestamp).format("dddd")
 
@@ -28,6 +28,7 @@ def timerange(start,end):
 	start=getdatetime(start)
 	end=getdatetime(end)
 	return arrow.Arrow.span_range('hour', start, end)
+
 def gettimeresp(res):
 	data=[]
 	for i in res:
@@ -37,6 +38,7 @@ def gettimeresp(res):
 		if i["End"]!="None":
 			end=int(toEST(i['End']))
 			enddate=getdatetime(end)
+			print i["State"],"Start",start,startdate,"End",end,enddate
 			end*=1000
 		else:
 			enddate=arrow.now().datetime

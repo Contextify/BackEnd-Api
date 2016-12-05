@@ -44,7 +44,7 @@ class Day():
                     max1=prob
             self.probmax[i]=maxstate
         return self.probmax
-        
+
 class User():
     def __init__(self,name):
         self.name=name.title()
@@ -57,11 +57,11 @@ class User():
 
     def retdict(self,dayprob,day=None):
         a=defaultdict(lambda: defaultdict(dict))
-        if not day:
-            for k,v in dayprob.items():
-                a[k]=v.getprob()
-            return a
-        return dayprob[day].getprob()
+        if day:
+            return dayprob[day].getprob()
+        for k,v in dayprob.items():
+            a[k]=v.getprob()
+        return a
 
     def __repr__(self):
         return self.name

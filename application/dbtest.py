@@ -20,10 +20,10 @@ def write_location(data):
 
 def update_prev_state(data):
 	loc=db.location
-	d={"User":data['User'],"State":data["Laststate"],"End":"None"}
+	d={"User":data['User'],"Start":data["Laststatetime"],"State":data["Laststate"],"End":"None"}
 	res=loc.find_one(d)
 	if res:
-		loc.update(d,{"$set":{"End":arrow.get(data["Timestamp"]).to("utc").timestamp,"Enddate":arrow.get(data["Timestamp"]).to("utc").datetime}},False,True)
+		loc.update(d,{"$set":{"End":data["Timestamp"],"Enddate":arrow.get(data["Timestamp"]).to("utc").datetime}},False,True)
 
 
 def get_states_by_day(user,day=None,state=None):

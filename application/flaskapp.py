@@ -36,11 +36,20 @@ class UserProb(Resource):
         parser.add_argument('day', type=str)
         args = parser.parse_args()
         day = args.get('day')
-        print day,type(day)
         user=models.User(username)
         res=user.calc_prob(day)
         return jsonify(res)
 
+class UserProbState(Resource):
+    def get(self,username):
+        parser = reqparse.RequestParser()
+        parser.add_argument('day', type=str)
+        args = parser.parse_args()
+        day = args.get('day')
+        user=models.User(username)
+        res=user.calc_prob(day)
+        return jsonify(res)
+        
 class Timeline(Resource):
     def get(self):
         return app.send_static_file('timeline.html')
