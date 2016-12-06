@@ -37,7 +37,7 @@ class UserProb(Resource):
         args = parser.parse_args()
         day = args.get('day')
         user=models.User(username)
-        res=user.calc_prob(day)
+        res=user.calc_prob(day,state=False)
         return jsonify(res)
 
 class UserProbState(Resource):
@@ -47,9 +47,21 @@ class UserProbState(Resource):
         args = parser.parse_args()
         day = args.get('day')
         user=models.User(username)
-        res=user.calc_prob(day)
+        res=user.calc_prob(day,state=True)
         return jsonify(res)
-        
+
+class NextState(Resource):
+    def get(self,username):
+        parser = reqparse.RequestParser()
+        parser.add_argument('day', type=str)
+        parser.add_argument('hour',type=int)
+        args = parser.parse_args()
+        day = args.get('day')
+        hour= args.get('hour')
+        user=models.User(username)
+        res=user.next_state(day,hour)
+        return jsonify(res)
+
 class Timeline(Resource):
     def get(self):
         return app.send_static_file('timeline.html')
@@ -58,6 +70,8 @@ api.add_resource(HelloWorld, '/')
 api.add_resource(UserData,"/user/<string:username>")
 api.add_resource(UserProb,"/user/<string:username>/prob")
 api.add_resource(StatePercent,"/user/<string:username>/states")
+api.add_resource(UserProbState,"/user/<string:username>/prob/states")
+api.add_resource(NextState,"/user/<string:username>/nextstate")
 api.add_resource(Timeline,"/timeline")
 
 if __name__=="__main__":

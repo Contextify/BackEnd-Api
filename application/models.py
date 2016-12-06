@@ -4,8 +4,9 @@ from pymongo import MongoClient,errors
 from collections import defaultdict,OrderedDict,namedtuple
 import config
 import json
-
+import numpy as np
 statemap={1:"Home",2:"NearHome",3:"Outside",4:"Work",5:"Class",6:"Library"}
+reversemap={"Home":1,"NearHome":2,"Outside":3,"Work":4,"Class":5,"Library":6}
 transprob=defaultdict(list,
     ((1,[0,1,0,0,0,0]),
     (2,[0.33,0,0.33,0.33,0,0]),
@@ -22,6 +23,7 @@ class Day():
         self.d={}
         self.probdict=defaultdict(dict)
         self.probmax={}
+
     def addcount(self,hour,state):
         try:
             self.hourdict[int(hour)][state]+=1
@@ -42,8 +44,8 @@ class Day():
                 if max1<prob:
                     maxstate=k
                     max1=prob
-            self.probmax[i]=maxstate
-        return self.probmax
+            self.probmax[i]={maxstate:max1}
+        return self.probmax,self.probdict
 
 class User():
     def __init__(self,name):
@@ -57,11 +59,12 @@ class User():
 
     def retdict(self,dayprob,day=None):
         a=defaultdict(lambda: defaultdict(dict))
+        b=defaultdict(lambda: defaultdict(dict))
         if day:
             return dayprob[day].getprob()
         for k,v in dayprob.items():
-            a[k]=v.getprob()
-        return a
+            a[k],b[k]=v.getprob()
+        return a,b
 
     def __repr__(self):
         return self.name
@@ -109,17 +112,37 @@ class User():
         return self.dayprob
 
 
-    def calc_prob(self,day=None):
+    def calc_prob(self,day=None,state=True):
         res=None
         if day:
             res=dbtest.get_states_by_day(self.name,day)
             res=self._calc_prob(res)
-            res=self.retdict(res)
+            if state:
+                res=self.retdict(res)[0]
+            else:
+                res=self.retdict(res)[1]
             return {day:res[day]}
         else:
             for d in self.days.keys():
                 res=dbtest.get_states_by_day(self.name,d)
-                print res
                 res=self._calc_prob(res)
-                res=self.retdict(res)
+                if state:
+                    res=self.retdict(res)[0]
+                else:
+                    res=self.retdict(res)[1]
             return res
+
+    def next_state(self,day=None,hour=0):
+        res=None
+        next_state_prob=[]
+        res=self.calc_prob(day,state=True)
+        state=res[day][hour]
+        if not state:
+            return None
+        currstate,=state.keys()
+        prob,=state.values()
+        # print reversemap[currstate]
+        a=np.array([float(prob)*float(x) for x in transprob[reversemap[currstate]]])
+        j,=np.unravel_index(a.argmax(), a.shape)
+        nsprob=a[j]
+        return {"Current_state":{currstate:prob},"next_state":{statemap[j+1]:nsprob}}
