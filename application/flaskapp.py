@@ -67,6 +67,15 @@ class CurrentState(Resource):
         user=models.User(username)
         return jsonify(user.get_current_state())
 
+class Lastrecords(Resource):
+    def get(self,username):
+        parser = reqparse.RequestParser()
+        parser.add_argument('limit',type=int)
+        user=models.User(username)
+        args = parser.parse_args()
+        limit=args.get('limit')
+        return jsonify(user.lastfewstate(limit=limit))
+        
 class Timeline(Resource):
     def get(self):
         return app.send_static_file('timeline.html')
@@ -74,10 +83,11 @@ class Timeline(Resource):
 api.add_resource(HelloWorld, '/')
 api.add_resource(UserData,"/user/<string:username>")
 api.add_resource(UserProb,"/user/<string:username>/prob")
-api.add_resource(StatePercent,"/user/<string:username>/states")
-api.add_resource(UserProbState,"/user/<string:username>/prob/states")
+api.add_resource(StatePercent,"/user/<string:username>/state")
+api.add_resource(UserProbState,"/user/<string:username>/prob/state")
 api.add_resource(NextState,"/user/<string:username>/nextstate")
-api.add_resource(CurrentState,"/user/<string:username>/CurrentState")
+api.add_resource(CurrentState,"/user/<string:username>/currentstate")
+api.add_resource(Lastrecords,"/user/<string:username>/latest")
 api.add_resource(Timeline,"/timeline")
 
 if __name__=="__main__":

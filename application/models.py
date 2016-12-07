@@ -54,7 +54,7 @@ class Day():
                 if max1<prob:
                     maxstate=k
                     max1=prob
-            self.probmax[i]={maxstate:max1}
+            self.probmax[i]={"State":maxstate,"Prob":max1}
         return self.probmax,self.probdict
 
 class User():
@@ -137,7 +137,7 @@ class User():
                 res=self.retdict(res)[0]
             else:
                 res=self.retdict(res)[1]
-            return {day:res[day]}
+            return res[day]
         else:
             for d in self.days.keys():
                 res=dbtest.get_states_by_day(self.name,d)
@@ -148,16 +148,40 @@ class User():
                     res=self.retdict(res)[1]
             return res
 
+    def lastfewstate(self,limit):
+        res=dbtest.last_ten(self.name,limit)
+        return list(res)
+
     def next_state(self,day=None,hour=0):
         res=None
         next_state_prob=[]
-        res=self.calc_prob(day,state=True)
-        state=res[day][hour]
-        if not state:
-            return None
-        currstate,=state.keys()
-        prob,=state.values()
+        res=self.calc_prob(day,state=False)
+        state=self.get_current_state()
+        currstate=state['State']
+        print res
+        predstate=res[hour]
+        print predstate
+        # actstate=res[day][hour]
+        # if not state:
+        #     return None
+        # predstate,=state.keys()
+        # prob,=state.values()
+        # if currstate!=predstate:
+        #     currstate=predstate
+        # try:
+        #     prob=res[day][hour][currstate]
+        # except KeyError:
+        #     prob=0
+
+        return {"Actual":currstate,"Predicted":predstate}
+
+
         a=np.array([float(prob)*float(x) for x in transprob[reversemap[currstate]]])
-        j,=np.unravel_index(a.argmax(), a.shape)
-        nsprob=a[j]
-        return {"Current_state":{currstate:prob},"next_state":{statemap[j+1]:nsprob}}
+        # return a
+        # j,=np.unravel_index(a.argmax(), a.shape)
+        for i in range(len(a)):
+            nextstate=statemap[i+1]
+            nsprob=a[i]
+            next_state_prob.append({nextstate:nsprob})
+
+        return {"Current_state":{currstate:prob},"next_state":next_state_prob}

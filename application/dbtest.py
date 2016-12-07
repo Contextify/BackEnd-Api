@@ -34,6 +34,10 @@ def update_prev_state(data):
 		loc.update(d,{"$set":{"End":data["Timestamp"],"Enddate":arrow.get(data["Timestamp"]).to("utc").datetime}},False,True)
 
 
+def last_ten(user,limit):
+	loc=db.location
+	return loc.find({"User":user},{"_id":0,"Startdate":0,"Enddate":0,"User":0}).sort([("Start",-1)]).limit(limit)
+
 def get_current_state(user):
 	statedb=db.state
 	return list(statedb.find({"User":user}))
