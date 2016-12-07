@@ -12,7 +12,15 @@ db=client.contextify
 
 def write_location(data):
 	loc=db.location
+	st=db.state
 	res=loc.find_one(data)
+	curr_state=st.find_one({"User":data["User"]})
+	print curr_state
+	if curr_state:
+		st.update({"_id":ObjectId(curr_state["_id"])},{"$set":{"State":data["State"]}})
+	else:
+		st.insert({"User":data["User"],"State":data["State"]})
+
 	if res:
 		return -1
 	loc.insert(data)
@@ -25,6 +33,10 @@ def update_prev_state(data):
 	if res:
 		loc.update(d,{"$set":{"End":data["Timestamp"],"Enddate":arrow.get(data["Timestamp"]).to("utc").datetime}},False,True)
 
+
+def get_current_state(user):
+	statedb=db.state
+	return list(statedb.find({"User":user}))
 
 def get_states_by_day(user,day=None,state=None):
 	if user==None or day==None:

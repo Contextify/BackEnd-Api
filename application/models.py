@@ -16,6 +16,16 @@ transprob=defaultdict(list,
     (6,[0,0,1,0,0,0])
     ))
 
+
+
+class State():
+    def __init__(self,name,username):
+        self.username=username
+        self.name=name
+
+    def getstate():
+        res=find()
+
 class Day():
     def __init__(self,name):
         self.name=name
@@ -68,6 +78,12 @@ class User():
 
     def __repr__(self):
         return self.name
+
+    def get_current_state(self):
+        res=list(dbtest.get_current_state(self.name))
+        if not res:
+            return None
+        return {"State":res[0]["State"]}
 
     def get_states(self,start=None,end=None):
         loc=self.db.location
@@ -141,7 +157,6 @@ class User():
             return None
         currstate,=state.keys()
         prob,=state.values()
-        # print reversemap[currstate]
         a=np.array([float(prob)*float(x) for x in transprob[reversemap[currstate]]])
         j,=np.unravel_index(a.argmax(), a.shape)
         nsprob=a[j]

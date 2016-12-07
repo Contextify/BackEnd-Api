@@ -16,12 +16,13 @@ class MqttHandler():
         self.client.subscribe("#", qos=1)
         self.client.message_callback_add("location",self.on_location)
 
+
     def on_location(self,client, userdata, msg):
         data=json.loads(msg.payload)
+        print data
         d={"User":data["User"],"State":data["State"],"Start":data["Timestamp"],"Startdate":arrow.get(data["Timestamp"]).datetime,"End":"None"}
         dbtest.update_prev_state(data)
         dbtest.write_location(d)
-
 
     def run(self):
         try:

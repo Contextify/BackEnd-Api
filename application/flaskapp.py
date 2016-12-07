@@ -62,6 +62,11 @@ class NextState(Resource):
         res=user.next_state(day,hour)
         return jsonify(res)
 
+class CurrentState(Resource):
+    def get(self,username):
+        user=models.User(username)
+        return jsonify(user.get_current_state())
+
 class Timeline(Resource):
     def get(self):
         return app.send_static_file('timeline.html')
@@ -72,6 +77,7 @@ api.add_resource(UserProb,"/user/<string:username>/prob")
 api.add_resource(StatePercent,"/user/<string:username>/states")
 api.add_resource(UserProbState,"/user/<string:username>/prob/states")
 api.add_resource(NextState,"/user/<string:username>/nextstate")
+api.add_resource(CurrentState,"/user/<string:username>/CurrentState")
 api.add_resource(Timeline,"/timeline")
 
 if __name__=="__main__":
