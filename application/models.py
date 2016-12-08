@@ -176,24 +176,20 @@ class User():
 
     def next_state(self,day=None,hour=0):
         res=None
-        next_state_prob=[]
+        next_state_prob={}
         res=self.calc_prob(day,state=False)
         state=self.get_current_state()
         trans=self.transition_matrix()
         currstate=state['State']
-        try:
+        predicted_curr_state=getmax_key(res[hour])[0]
+        if predicted_curr_state==currstate:
             currstateprob=res[hour][currstate]
-        except KeyError:
-            currstateprob=0
+        else:
+            currstate,currstateprob=getmax_key(res[hour])
+        print currstate,currstateprob
         predstatedict=res[hour]
         predicted_state,predicted_prob_val=getmax_key(predstatedict)
-        print predstatedict
-        actnextstate=map(getmax_key,[{k:float(v)*currstateprob} for k,v in predstatedict.items()])
-        predictednextstate=map(getmax_key,[{k:float(v)*predicted_prob_val} for k,v in predstatedict.items()])
-
-        return {
-        "Actual_Current_State":{currstate:currstateprob},
-        "Predicted_Current_State":{predicted_state:predicted_prob_val},
-        "Actual_Next_State":actnextstate,
-        "Predicted_Next_State":predictednextstate
-            }
+        for i,v in predstatedict.items():
+            next_state_prob[i]=float(v)*currstateprob*trans[currstate][i]
+        next_state=getmax_key(next_state_prob)
+        return {"CurrentState":currstate,"NextState":next_state[0]}
