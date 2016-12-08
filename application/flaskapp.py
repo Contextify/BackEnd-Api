@@ -75,10 +75,11 @@ class Lastrecords(Resource):
         args = parser.parse_args()
         limit=args.get('limit')
         return jsonify(user.lastfewstate(limit=limit))
-        
+
 class Timeline(Resource):
     def get(self):
         return app.send_static_file('timeline.html')
+
 
 api.add_resource(HelloWorld, '/')
 api.add_resource(UserData,"/user/<string:username>")

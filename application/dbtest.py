@@ -42,6 +42,7 @@ def get_current_state(user):
 	statedb=db.state
 	return list(statedb.find({"User":user}))
 
+
 def get_states_by_day(user,day=None,state=None):
 	if user==None or day==None:
 		return -1

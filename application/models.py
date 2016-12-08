@@ -7,16 +7,21 @@ import json
 import numpy as np
 statemap={1:"Home",2:"NearHome",3:"Outside",4:"Work",5:"Class",6:"Library"}
 reversemap={"Home":1,"NearHome":2,"Outside":3,"Work":4,"Class":5,"Library":6}
-transprob=defaultdict(list,
-    ((1,[0,1,0,0,0,0]),
-    (2,[0.33,0,0.33,0.33,0,0]),
-    (3,[0,0.33,0,0,0.33,0.33]),
-    (4,[0,1,0,0,0,0]),
-    (5,[0,0,1,0,0,0]),
-    (6,[0,0,1,0,0,0])
-    ))
+# transprob=defaultdict(list,
+#     ((1,[0.5,0.5,0,0,0,0]),
+#     (2,[0.25,0.25,0.25,0.25,0,0]),
+#     (3,[0,0.25,0.25,0,0.25,0.25]),
+#     (4,[0,0.5,0,0.5,0,0]),
+#     (5,[0,0,0.5,0,0.5,0]),
+#     (6,[0,0,0.5,0,0,0.5])
+#     ))
 
-
+def getmax_key(d):
+    v=list(d.values())
+    k=list(d.keys())
+    maxval=max(v)
+    maxkey=k[v.index(maxval)]
+    return (maxkey,maxval)
 
 class State():
     def __init__(self,name,username):
@@ -152,36 +157,43 @@ class User():
         res=dbtest.last_ten(self.name,limit)
         return list(res)
 
+    def transition_matrix(self):
+        trans=defaultdict(lambda: defaultdict(int))
+        res=self.get_states()
+        for i,j in zip(res,res[1:]):
+            if i["State"]!=j["State"]:
+                try:
+                    trans[i["State"]][j["State"]]+=1
+                except:
+                    trans[i["State"]][j["State"]]=0
+        transprob=defaultdict(lambda: defaultdict(int))
+        for k,v in trans.items():
+            total=sum(v.values())
+            for k1,v1 in v.items():
+                transprob[k][k1]=float(v1)/total
+        return transprob
+
+
     def next_state(self,day=None,hour=0):
         res=None
         next_state_prob=[]
         res=self.calc_prob(day,state=False)
         state=self.get_current_state()
+        trans=self.transition_matrix()
         currstate=state['State']
-        print res
-        predstate=res[hour]
-        print predstate
-        # actstate=res[day][hour]
-        # if not state:
-        #     return None
-        # predstate,=state.keys()
-        # prob,=state.values()
-        # if currstate!=predstate:
-        #     currstate=predstate
-        # try:
-        #     prob=res[day][hour][currstate]
-        # except KeyError:
-        #     prob=0
+        try:
+            currstateprob=res[hour][currstate]
+        except KeyError:
+            currstateprob=0
+        predstatedict=res[hour]
+        predicted_state,predicted_prob_val=getmax_key(predstatedict)
+        print predstatedict
+        actnextstate=map(getmax_key,[{k:float(v)*currstateprob} for k,v in predstatedict.items()])
+        predictednextstate=map(getmax_key,[{k:float(v)*predicted_prob_val} for k,v in predstatedict.items()])
 
-        return {"Actual":currstate,"Predicted":predstate}
-
-
-        a=np.array([float(prob)*float(x) for x in transprob[reversemap[currstate]]])
-        # return a
-        # j,=np.unravel_index(a.argmax(), a.shape)
-        for i in range(len(a)):
-            nextstate=statemap[i+1]
-            nsprob=a[i]
-            next_state_prob.append({nextstate:nsprob})
-
-        return {"Current_state":{currstate:prob},"next_state":next_state_prob}
+        return {
+        "Actual_Current_State":{currstate:currstateprob},
+        "Predicted_Current_State":{predicted_state:predicted_prob_val},
+        "Actual_Next_State":actnextstate,
+        "Predicted_Next_State":predictednextstate
+            }
