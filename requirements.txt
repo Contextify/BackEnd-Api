@@ -14,7 +14,7 @@ numpy==1.11.2
 PyExecJS==1.4.0
 python-dateutil==2.5.3
 pytz==2016.7
-PyYAML==3.11
+PyYAML==5.4
 requests==2.11.1
 six==1.10.0
 sseclient==0.0.12
