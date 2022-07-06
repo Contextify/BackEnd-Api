@@ -6,7 +6,7 @@ colorama==0.2.5
 configparser==3.5.0
 daemonize==2.4.7
 Flask==0.11.1
-html5lib==0.999
+html5lib==0.999999999
 itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
